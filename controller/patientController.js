@@ -93,9 +93,30 @@ const updatePatient = async (req, res) => {
   }
 };
 
+const deletePatient = async (req, res) => {
+  const { id } = req.params || {};
+
+  try {
+    await patientService.deletePatient(id);
+
+    return res.status(200).json({
+      message: 'Patient deleted successfully',
+      data: { id },
+    });
+  } catch (err) {
+    if (err && err.name === 'NotFoundError') {
+      return res.status(404).json({ message: 'Patient not found' });
+    }
+
+    console.error(err);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
 module.exports = {
   createPatient,
   getPatients,
   getPatientById,
   updatePatient,
+  deletePatient,
 };

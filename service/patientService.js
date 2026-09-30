@@ -36,6 +36,12 @@ async function updatePatient(id, data) {
   return patient;
 }
 
+async function deletePatient(id) {
+  const patient = await getPatientById(id);
+  await patient.destroy();
+  return true;
+}
+
 async function getPatients({ search = '', page = 1, limit = 10 } = {}) {
   const where = {};
   const searchTerm = String(search || '').trim();
@@ -73,5 +79,6 @@ module.exports = {
   createPatient,
   getPatientById,
   updatePatient,
+  deletePatient,
   getPatients,
 };

@@ -39,6 +39,7 @@ router.get('/patients', authenticate, iCan(['admin', 'staff']), patientQueryVali
 router.get('/patients/:id', authenticate, iCan(['admin', 'staff']), patientIdValidationRules, validatePatientParam, patientController.getPatientById);
 router.post('/patients', authenticate, iCan(['admin', 'staff']), patientValidationRules, validate, patientController.createPatient);
 router.put('/patients/:id', authenticate, iCan(['admin', 'staff']), patientIdValidationRules, updatePatientValidationRules, validatePatientParam, validate, patientController.updatePatient);
+router.delete('/patients/:id', authenticate, iCan(['admin']), patientIdValidationRules, validatePatientParam, patientController.deletePatient);
 
 //appointment routes
 router.get('/appointments', authenticate, iCan(['admin', 'staff']), appointmentQueryValidationRules, validateAppointmentQuery, appointmentController.getAppointments);
