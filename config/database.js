@@ -1,8 +1,10 @@
-const { Sequelize } = require('sequelize');
-require('dotenv').config();
 
-const sequelize = new Sequelize(process.env.DATABASE_URL, {
-  dialect: 'postgres',
+const Sequelize = require("sequelize");
+
+const sequelize = new Sequelize("clinic_flow", "postgres", "password", {
+  host: "127.0.0.1",
+  port: 5432,
+  dialect: "postgres",
   logging: false,
 });
 
