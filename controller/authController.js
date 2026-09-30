@@ -36,7 +36,16 @@ const login = async (req, res) => {
     }
 };
 
+const me = async (req, res) => {
+    const account = req.account;
+    if (!account) return res.status(401).json({ message: 'Not authenticated' });
+    const accountJson = account.toJSON();
+    const { password: _p, ...publicData } = accountJson;
+    return res.status(200).json({ data: publicData, type: req.accountType || 'unknown' });
+};
+
 module.exports = {
     register,
     login,
+    me,
 };
