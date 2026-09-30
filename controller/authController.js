@@ -1,4 +1,5 @@
 const patientService = require('../service/patientService');
+const authService = require('../service/authService');
 
 const register = async (req, res) => {
     const validBody = { ...(req.validated || {}) };
@@ -19,6 +20,23 @@ const register = async (req, res) => {
     }
 };
 
+const login = async (req, res) => {
+    const { email, password, isPatient = true } = req.validated || {};
+    try {
+        const result = await authService.login({ email, password, isPatient });
+        if (!result) return res.status(401).json({ message: 'Invalid credentials' });
+        const account = result.account;
+        const token = result.token;
+        const accountJson = typeof account.toJSON === 'function' ? account.toJSON() : account;
+        const { password: _p, ...publicData } = accountJson;
+        return res.status(200).json({ token, data: publicData });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
 module.exports = {
     register,
+    login,
 };
