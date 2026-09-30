@@ -5,13 +5,18 @@ const authController = require('../controller/authController');
 const { loginRules, validateAuth } = require('../middleware/validators/authValidator');
 const { authenticate } = require('../middleware/authMiddleware');
 const { userValidationRules, validateUser } = require('../middleware/validators/userValidator');
+const { appointmentValidationRules, validateAppointment } = require('../middleware/validators/appointmentValidator');
+const { iCan } = require('../middleware/iCan');
 const userController = require('../controller/userController');
-
+const appointmentController = require('../controller/appointmentController');
 
 //auth routes
 router.post("/register", patientValidationRules, validate, authController.register);
 router.post('/users', userValidationRules, validateUser, userController.createUser);
 router.post('/auth/login', loginRules, validateAuth, authController.login);
 router.get('/auth/me', authenticate, authController.me);
+
+//appointment routes
+router.post('/appointments', authenticate, iCan(['admin', 'staff']), appointmentValidationRules, validateAppointment, appointmentController.createAppointment);
 
 module.exports = router;
