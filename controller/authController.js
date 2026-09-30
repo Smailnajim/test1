@@ -1,19 +1,12 @@
-const bcrypt = require('bcrypt');
-const Patient = require('../models/Patient');
+const patientService = require('../service/patientService');
 
 const register = async (req, res) => {
   const validBody = { ...(req.validated || {}) };
   try {
-    if (validBody.password) {
-      const hashed = await bcrypt.hash(validBody.password, 10);
-      validBody.password = hashed;
-    }
-
-    const patient = await Patient.create(validBody);
-    console.log('Patient created:', patient.toJSON());
-    // const patientJson = typeof patient.toJSON === 'function' ? patient.toJSON() : patient;
-    // const { password, ...publicData } = patientJson;
-    return res.status(201).json({ message: 'User registered successfully', data: patient.toJSON() });
+    const patient = await patientService.createPatient(validBody);
+    const patientJson = patient.toJSON();
+    const { password, ...publicData } = patientJson;
+    return res.status(201).json({ message: 'User registered successfully', data: publicData });
   } catch (err) {
     if (err && err.name === 'SequelizeUniqueConstraintError') {
       const errors = err.errors ? err.errors.map(e => e.message) : [];
