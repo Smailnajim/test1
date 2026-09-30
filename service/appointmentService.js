@@ -69,7 +69,22 @@ async function getAppointments(filters = {}) {
   return appointments;
 }
 
+async function updateAppointmentStatus(id, status) {
+  const appointment = await Appointment.findByPk(id);
+
+  if (!appointment) {
+    const error = new Error('Appointment not found');
+    error.name = 'NotFoundError';
+    throw error;
+  }
+
+  appointment.status = status;
+  await appointment.save();
+  return appointment;
+}
+
 module.exports = {
   createAppointment,
   getAppointments,
+  updateAppointmentStatus,
 };

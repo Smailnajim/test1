@@ -8,8 +8,10 @@ const { userValidationRules, validateUser } = require('../middleware/validators/
 const {
   appointmentValidationRules,
   appointmentQueryValidationRules,
+  appointmentStatusValidationRules,
   validateAppointment,
   validateAppointmentQuery,
+  validateAppointmentStatus,
 } = require('../middleware/validators/appointmentValidator');
 const { iCan } = require('../middleware/iCan');
 const userController = require('../controller/userController');
@@ -24,5 +26,6 @@ router.get('/auth/me', authenticate, authController.me);
 //appointment routes
 router.get('/appointments', authenticate, iCan(['admin', 'staff']), appointmentQueryValidationRules, validateAppointmentQuery, appointmentController.getAppointments);
 router.post('/appointments', authenticate, iCan(['admin', 'staff']), appointmentValidationRules, validateAppointment, appointmentController.createAppointment);
+router.patch('/appointments/:id/status', authenticate, iCan(['admin', 'staff']), appointmentStatusValidationRules, validateAppointmentStatus, appointmentController.updateAppointmentStatus);
 
 module.exports = router;

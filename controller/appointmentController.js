@@ -53,7 +53,33 @@ const getAppointments = async (req, res) => {
   }
 };
 
+const updateAppointmentStatus = async (req, res) => {
+  const { status } = req.validated || {};
+  const { id } = req.params;
+
+  try {
+    const appointment = await appointmentService.updateAppointmentStatus(id, status);
+
+    return res.status(200).json({
+      message: 'Appointment status updated successfully',
+      data: appointment,
+    });
+  } catch (err) {
+    if (err && err.name === 'NotFoundError') {
+      return res.status(404).json({ message: 'Appointment not found' });
+    }
+
+    if (err && err.name === 'ValidationError') {
+      return res.status(400).json({ message: err.message });
+    }
+
+    console.error(err);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
 module.exports = {
   createAppointment,
   getAppointments,
+  updateAppointmentStatus,
 };

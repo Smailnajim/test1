@@ -27,6 +27,12 @@ const appointmentQueryValidationRules = [
     .isIn(['pending', 'confirmed', 'cancelled']).withMessage('Status must be pending, confirmed, or cancelled'),
 ];
 
+const appointmentStatusValidationRules = [
+  body('status')
+    .notEmpty().withMessage('Status is required')
+    .isIn(['pending', 'confirmed', 'cancelled']).withMessage('Status must be pending, confirmed, or cancelled'),
+];
+
 const validateAppointment = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -49,9 +55,22 @@ const validateAppointmentQuery = (req, res, next) => {
   next();
 };
 
+const validateAppointmentStatus = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
+
+  const data = matchedData(req, { includeOptionals: true });
+  req.validated = data;
+  next();
+};
+
 module.exports = {
   appointmentValidationRules,
   appointmentQueryValidationRules,
+  appointmentStatusValidationRules,
   validateAppointment,
   validateAppointmentQuery,
+  validateAppointmentStatus,
 };
