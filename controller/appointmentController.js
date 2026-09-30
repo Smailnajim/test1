@@ -37,6 +37,23 @@ const createAppointment = async (req, res) => {
   }
 };
 
+const getAppointments = async (req, res) => {
+  const { date, status } = req.queryValidated || {};
+
+  try {
+    const appointments = await appointmentService.getAppointments({ date, status });
+
+    return res.status(200).json({
+      message: 'Appointments fetched successfully',
+      data: appointments,
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
 module.exports = {
   createAppointment,
+  getAppointments,
 };

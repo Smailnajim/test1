@@ -1,5 +1,7 @@
+const { Op } = require('sequelize');
 const Appointment = require('../models/Appointment');
 const Patient = require('../models/Patient');
+const User = require('../models/User');
 
 async function createAppointment(data) {
   const payload = { ...data };
@@ -29,6 +31,45 @@ async function createAppointment(data) {
   return appointment;
 }
 
+async function getAppointments(filters = {}) {
+  const { date, status } = filters;
+  const where = {};
+
+  if (date) {
+    const start = new Date(date);
+    start.setHours(0, 0, 0, 0);
+
+    const end = new Date(date);
+    end.setHours(23, 59, 59, 999);
+
+    where.appointmentDate = {
+      [Op.between]: [start, end],
+    };
+  }
+
+  if (status) {
+    where.status = status;
+  }
+
+  const appointments = await Appointment.findAll({
+    where,
+    include: [
+      {
+        model: Patient,
+        attributes: ['id', 'fullName', 'email', 'phone'],
+      },
+      {
+        model: User,
+        attributes: ['id', 'fullName', 'email', 'role'],
+      },
+    ],
+    order: [['appointmentDate', 'DESC']],
+  });
+
+  return appointments;
+}
+
 module.exports = {
   createAppointment,
+  getAppointments,
 };

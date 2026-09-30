@@ -1,4 +1,4 @@
-const { body, validationResult, matchedData } = require('express-validator');
+const { body, query, validationResult, matchedData } = require('express-validator');
 
 const appointmentValidationRules = [
   body('patientId')
@@ -18,6 +18,15 @@ const appointmentValidationRules = [
     .isString().withMessage('Notes must be text'),
 ];
 
+const appointmentQueryValidationRules = [
+  query('date')
+    .optional()
+    .isISO8601().withMessage('Date must be a valid ISO date'),
+  query('status')
+    .optional()
+    .isIn(['pending', 'confirmed', 'cancelled']).withMessage('Status must be pending, confirmed, or cancelled'),
+];
+
 const validateAppointment = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -29,7 +38,20 @@ const validateAppointment = (req, res, next) => {
   next();
 };
 
+const validateAppointmentQuery = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
+
+  const data = matchedData(req, { locations: ['query'], includeOptionals: true });
+  req.queryValidated = data;
+  next();
+};
+
 module.exports = {
   appointmentValidationRules,
+  appointmentQueryValidationRules,
   validateAppointment,
+  validateAppointmentQuery,
 };
