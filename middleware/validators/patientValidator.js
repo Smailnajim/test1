@@ -6,7 +6,7 @@ const patientValidationRules = [
   body('fullName').notEmpty().withMessage('Full name is required'),
   body('phone')
     .notEmpty().withMessage('Phone is required')
-    .isMobilePhone('any').withMessage('Invalid phone number'),
+    .matches(/^\+?[1-9]\d{1,14}$/).withMessage('Invalid phone number. Use international format, e.g. +1234567890'),
   body('CIN').notEmpty().withMessage('CIN is required'),
   body('birthDate')
     .notEmpty().withMessage('Birth date is required')
