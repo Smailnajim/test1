@@ -23,6 +23,27 @@ const createPatient = async (req, res) => {
   }
 };
 
+const getPatients = async (req, res) => {
+  const query = { ...(req.queryValidated || {}) };
+
+  try {
+    const result = await patientService.getPatients({
+      search: query.search,
+      page: query.page,
+      limit: query.limit,
+    });
+
+    return res.status(200).json({
+      message: 'Patients fetched successfully',
+      ...result,
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
 module.exports = {
   createPatient,
+  getPatients,
 };

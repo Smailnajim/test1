@@ -1,4 +1,4 @@
-const { body, validationResult, matchedData } = require('express-validator');
+const { body, query, validationResult, matchedData } = require('express-validator');
 
 const patientValidationRules = [
   body('email').isEmail().withMessage('Invalid email'),
@@ -14,6 +14,21 @@ const patientValidationRules = [
   body('address').optional().isString().withMessage('Address must be text'),
 ];
 
+const patientQueryValidationRules = [
+  query('search')
+    .optional()
+    .isString().withMessage('Search must be text')
+    .trim(),
+  query('page')
+    .optional()
+    .isInt({ min: 1 }).withMessage('Page must be an integer greater than 0')
+    .toInt(),
+  query('limit')
+    .optional()
+    .isInt({ min: 1, max: 100 }).withMessage('Limit must be between 1 and 100')
+    .toInt(),
+];
+
 const validate = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -24,7 +39,20 @@ const validate = (req, res, next) => {
   next();
 };
 
+const validatePatientQuery = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
+
+  const data = matchedData(req, { locations: ['query'], includeOptionals: true });
+  req.queryValidated = data;
+  next();
+};
+
 module.exports = {
   patientValidationRules,
+  patientQueryValidationRules,
   validate,
+  validatePatientQuery,
 };

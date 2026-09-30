@@ -1,6 +1,11 @@
 const exress = require("express");
 const router = exress.Router();
-const { patientValidationRules, validate } = require('../middleware/validators/patientValidator');
+const {
+  patientValidationRules,
+  patientQueryValidationRules,
+  validate,
+  validatePatientQuery,
+} = require('../middleware/validators/patientValidator');
 const authController = require('../controller/authController');
 const { loginRules, validateAuth } = require('../middleware/validators/authValidator');
 const { authenticate } = require('../middleware/authMiddleware');
@@ -27,6 +32,7 @@ router.get('/auth/me', authenticate, authController.me);
 router.post('/users', authenticate, iCan(['admin', 'staff']), userValidationRules, validateUser, userController.createUser);
 
 //patients routes
+router.get('/patients', authenticate, iCan(['admin', 'staff']), patientQueryValidationRules, validatePatientQuery, patientController.getPatients);
 router.post('/patients', authenticate, iCan(['admin', 'staff']), patientValidationRules, validate, patientController.createPatient);
 
 //appointment routes
