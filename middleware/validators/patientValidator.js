@@ -1,8 +1,8 @@
 const { body, validationResult, matchedData } = require('express-validator');
 
 const patientValidationRules = [
-  body('email').optional().isEmail().withMessage('Invalid email'),
-  body('password').optional().isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
+  body('email').isEmail().withMessage('Invalid email'),
+  body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
   body('fullName').notEmpty().withMessage('Full name is required'),
   body('phone')
     .notEmpty().withMessage('Phone is required')
