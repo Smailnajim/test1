@@ -12,6 +12,30 @@ async function createPatient(data) {
   return patient;
 }
 
+async function getPatientById(id) {
+  const patient = await Patient.findByPk(id);
+
+  if (!patient) {
+    const error = new Error('Patient not found');
+    error.name = 'NotFoundError';
+    throw error;
+  }
+
+  return patient;
+}
+
+async function updatePatient(id, data) {
+  const patient = await getPatientById(id);
+  const payload = { ...data };
+
+  if (payload.password) {
+    payload.password = await bcrypt.hash(payload.password, 10);
+  }
+
+  await patient.update(payload);
+  return patient;
+}
+
 async function getPatients({ search = '', page = 1, limit = 10 } = {}) {
   const where = {};
   const searchTerm = String(search || '').trim();
@@ -47,5 +71,7 @@ async function getPatients({ search = '', page = 1, limit = 10 } = {}) {
 
 module.exports = {
   createPatient,
+  getPatientById,
+  updatePatient,
   getPatients,
 };
